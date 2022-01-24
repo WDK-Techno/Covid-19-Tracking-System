@@ -29,7 +29,6 @@ typedef struct person_workPlace{
 
 typedef struct data{
     char name[50],id[13],pass[6],gnDev[11],jbRole[16],wrkDev[11],tel[11],vaci[4],placeName[50],placeUsername[20];
-    char date[12],PHIChecked[4],qRuleBreak[4];
     int age;
 
 }fullDataDict;
@@ -41,7 +40,7 @@ fullDataDict dataval[1000];
 
 void regPerson();
 void regPlace();
-void gramaNildhari();
+void PHI();
 
 void printPersonDictValues();
 void printPlaceDictValues();
@@ -78,7 +77,7 @@ int main()
 
     // regPerson();
     //regPlace();
-    gramaNildhari();
+    PHI();
     //printWorkPlaceDictValues();    
     
     //system("pause");
@@ -88,10 +87,10 @@ int main()
 
 
 //Grama Nildhari 
-void gramaNildhari(){
+void PHI(){
     char id[13], pass[6];
-    int GN_Val=0;
-    printf("\n\n\t\t\tGrama Nildhari System Login\n\n");
+    int PHI_Val=0;
+    printf("\n\n\t\t\tPHI System Login\n\n");
     
     int lineCount = count_lines("personDatabase.csv");
     updatePersonDict();
@@ -105,9 +104,9 @@ void gramaNildhari(){
 
         int check1 =0;
         for (int d=0; d<lineCount; d++){
-            if((strcmp(personVal[d].id,id)==0) && (strcmp(personVal[d].pass,pass)==0) && (strcmp(personVal[d].jbRole,"Grama Niladhari")==0)){
+            if((strcmp(personVal[d].id,id)==0) && (strcmp(personVal[d].pass,pass)==0) && (strcmp(personVal[d].jbRole,"PHI")==0)){
                 check1=1;
-                GN_Val = d;
+                PHI_Val = d;
             }
         }
         
@@ -123,9 +122,8 @@ void gramaNildhari(){
     while(run){
         printf("\nSelect :=> \n");
         printf("\t\t\t[1] - Residents Details\n");
-        printf("\t\t\t[2] - Update Covid Status\n");
-        printf("\t\t\t[3] - Complaints of Quarantine Rules Breaking\n");
-        printf("\t\t\t[4] - Main Menu\n");
+        printf("\t\t\t[2] - Tracking Details\n");        
+        printf("\t\t\t[3] - Main Menu\n");
     
         int ans3;
         printf("\nAnswer : ");
@@ -141,7 +139,7 @@ void gramaNildhari(){
             printf("\nAnswer : ");
             scanf("%d",&ans1);
 
-            printf("\n\nGrama Nildhari Worlong Devision : %s\n\n",personVal[GN_Val].wrkDev);
+            printf("\n\nPHI Working Devision : %s\n\n",personVal[PHI_Val].wrkDev);
             
             
             if (ans1 == 1){
@@ -149,7 +147,7 @@ void gramaNildhari(){
             
                 for(int d=0;d<lineCount;d++){
                     
-                    if(stringcompare(personVal[GN_Val].wrkDev,personVal[d].gnDev)==0){
+                    if(stringcompare(personVal[PHI_Val].wrkDev,personVal[d].gnDev)==0){
                         
                         //print line sperater
                         drawLinesM();
@@ -174,7 +172,7 @@ void gramaNildhari(){
 
                         if (strcmp(R_ID,personVal[n].id)==0){
                             
-                            if(stringcompare(personVal[GN_Val].wrkDev,personVal[n].gnDev)==0){
+                            if(stringcompare(personVal[PHI_Val].wrkDev,personVal[n].gnDev)==0){
                             
                                 //print line sperater
                                 drawLinesM();
@@ -208,103 +206,26 @@ void gramaNildhari(){
             }
         }
 
-        //Update Covid Details (****) 
+
+        //See Tracking Details (****) 
         if(ans3 == 2){
-            char R_ID[13];
-            int wh=0;
-            while(1){
-                printf("\nEnter Resident ID : ");
-                scanf("%s",R_ID);
-                for (int n = 0; n<lineCount; n++){
-
-                    if (strcmp(R_ID,personVal[n].id)==0){
-                        
-                        if(stringcompare(personVal[GN_Val].wrkDev,personVal[n].gnDev)==0){
-                            char date[12];
-                            //print line sperater
-                            drawLinesM();
-                            //print values
-                            printf("\nID : %s\t Name : %s\tVacination : %s\t WorkPlace : %s\n",dataval[n].id,dataval[n].name,dataval[n].vaci,dataval[n].placeName);
-                            //draw line below last row
-                            drawLinesM();
-                            printf("\n");
-                            
-                            //update covid details
-                            printf("Data (DD/MM/YYYY) : ");
-                            scanf("%s",date);
-                            strcpy(dataval[n].date,date);
-
-                            printf("\nPHI Checked :==> \n");
-                            printf("\t\t\t[1] - Yes\n");
-                            printf("\t\t\t[2] - No\n");
-                            int ans4;
-                            printf("\nAnswer : ");
-                            scanf("%d",&ans4);
-
-                            if (ans4 ==1){
-                                strcpy(dataval[n].PHIChecked,"Yes");
-                            }else if (ans4==2){
-                                strcpy(dataval[n].PHIChecked,"No");
-                            }
-                            
-                            // printf("\n%s\t %s\n",dataval[n].date,dataval[n].PHIChecked);
-                            
-                            //break for loop
-                            wh=1;
-                            break; 
-                        }
-                        
-                    }
-                }
-                if(wh==1){
-                    break;
-                }
-                printf("\n\t\tInvalid ID..!\n");
-                printf("\n\nDo you Need Try Again :=>\n");
-                printf("\t\t\t[1] - YES\n");
-                printf("\t\t\t[2] - NO\n");
-
-                int ans2;
-                printf("\nAnswer : ");
-                scanf("%d",&ans2);
-                
-                if (ans2==2){
-                    break;
-                }
-            }
-        }
-        if(ans3 == 3){
             char R_ID[13];    
             while(1){
                 printf("\nEnter Resident ID : ");
                 scanf("%s",R_ID);
 
                 int n = checkPersonPosition(R_ID);
-                if (stringcompare(dataval[n].gnDev,dataval[GN_Val].wrkDev)==0){
+                if (stringcompare(dataval[n].gnDev,dataval[PHI_Val].wrkDev)==0){
                     
                     //print line sperater
                     drawLinesM();
                     //print values
-                    printf("\nID : %s\t Name : %s\tVacination : %s\t WorkPlace : %s\n Quarantined Date : %s\t PHI Checked : %s\n",dataval[n].id,dataval[n].name,dataval[n].vaci,dataval[n].placeName,dataval[n].date,dataval[n].PHIChecked);
+                    printf("\nID : %s\t Name : %s\tVacination : %s\t WorkPlace : %s\n",dataval[n].id,dataval[n].name,dataval[n].vaci,dataval[n].placeName);
                     //draw line below last row
                     drawLinesM();
                     printf("\n");
 
-                    printf("Breaking Quarantine Rules :==>\n");
-                    printf("\t\t\t[1] - YES\n");
-                    printf("\t\t\t[2] - NO\n");
-                    
-                    int ans4;
-                    printf("\nAnswer : ");
-                    scanf("%d",&ans4);
-
-                    if (ans4 ==1){
-                        strcpy(dataval[n].qRuleBreak,"Yes");
-                    }else if (ans4==2){
-                        strcpy(dataval[n].qRuleBreak,"No");
-                    }
-                    
-                    // printf("\n%s\n",dataval[n].qRuleBreak);
+                   
                     break;
                 }
                 printf("\n\t\tInvalid ID..!\n");
@@ -323,7 +244,10 @@ void gramaNildhari(){
             }
         
         }
-        if (ans3 == 4){
+        
+
+        //system PHI exite
+        if (ans3 == 3){
             break;
         }
     }
