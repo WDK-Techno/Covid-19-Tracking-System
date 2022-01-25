@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include "reusingfunctions.h"
 #include "readcsv.h"
+#include <time.h>
 
 typedef struct person{
     char name[50],id[13],pass[6],gnDev[11],jbRole[16],wrkDev[11],tel[11],vaci[4];
@@ -33,14 +34,21 @@ typedef struct data{
 
 }fullDataDict;
 
+typedef struct tracking{
+    char time[30],id[13],placename[50],username[20],placetype[16],location[11];
+}trackingDict;
+
 personDict personVal[1000]; //array to structs to store values
 placeDict placeVal[1000];
 workplaceDict workVal[1000];
+trackingDict trackVal[1000];
 fullDataDict dataval[1000];
+
 
 void regPerson();
 void regPlace();
 void PHI();
+void tracking();
 
 void printPersonDictValues();
 void printPlaceDictValues();
@@ -60,33 +68,100 @@ int checkWorkPosition(char id[20]);
 int checkPersonPosition(char id[20]);
 int checkPlacePosition(char id[20]);
 
-
+void refresh(){
+    updatePersonDict();
+    updatePlaceDict();
+    updateWorkPlaceDict();
+    updateFullDataDict();
+}
 
 int main()
 {
     //refresh data from databases
-    updatePersonDict();
-    updatePlaceDict();
-    updateWorkPlaceDict();
+    refresh();
 
-    updateFullDataDict();
-    
     printf("\t\t\t\tCovid19 Management System\n\n");
     
 
 
     // regPerson();
     //regPlace();
-    PHI();
+    // PHI();
+    tracking();
     //printWorkPlaceDictValues();    
     
     //system("pause");
     
     return 0;
 }
+//Tracking 
+void tracking(){
+    char user[13], pass[6];
+    int place_p = 0;
+    printf("\n\n\t\t\tPlace System Login\n\n");
 
+    refresh();
+    //system login
+    while(1){
+        printf("\nUsername : ");
+            scanf("%s",user);
+            printf("Password : ");
+            scanf("%s",pass);
 
-//Grama Nildhari 
+        place_p =  checkPlacePosition(user); //in here,if checkplace functions couldn't find usesr name it will return -1
+
+        // printf("\n%d\n",place_p);
+        // printf("\n%s\n",placeVal[place_p].userName);
+        // printf("\n%s\n",placeVal[place_p].pass);
+
+        if((place_p!=-1)&&(strcmp(placeVal[place_p].pass,pass)==0)){
+            printf("\nLogin Complete\n");
+            break;
+        }
+        printf("\n\t\tIncorrect user name or password.. Try again!\n\n");
+    }
+    printf("\n\t\t**Enter 0 for exit system**\n\n");
+    //get customer id
+    while(1){
+        char customerTD[13];
+        printf("Customer ID : ");
+        scanf("%s",customerTD);
+
+        if(strcmp(customerTD,"0")==0){
+            printf("\n\t\tSystem Exit\n\n");
+            break;
+        }
+
+        //check customer id in the person database
+        int e = checkPersonPosition(customerTD);
+        if (e!=-1){
+            //get current date and time
+            time_t currentTime;
+        
+            //remove \n from ctime()
+            currentTime = time(NULL);
+            char *c_time = ctime(&currentTime);
+            c_time[strcspn(c_time, "\n")] = '\0'; //replace \0 instead of \n
+
+            
+            //write to the CSV
+            FILE* fp = fopen("trackingDatabase.csv", "a+");
+                if (!fp) {
+                        // Error in file opening
+                        printf("Can't access Database\n");
+                    }
+                fprintf(fp,"\n%s,%s,%s,%s,%s,%s",c_time,customerTD,placeVal[place_p].name,placeVal[place_p].location,placeVal[place_p].plctype,placeVal[place_p].userName);
+                printf("\n\t\tCompleted..\n\n");
+
+                fclose(fp);
+        }
+        else if (e==-1){
+        printf("\n\t\tInvalid ID. This ID not in the system\n\n");
+        }
+    }
+}
+
+//PHI
 void PHI(){
     char id[13], pass[6];
     int PHI_Val=0;
@@ -656,17 +731,17 @@ void regPerson(){
             selectDivisions(wrkDev);
         }else strcpy(wrkDev, "None");
 
-printf("\n%s\t%s\t%s\t%d\t%s\t%s\t%s\t%s\t%s\n\n",name,id,pass1,age,tel,vaciF[vaci],gnDev,jbRole,wrkDev);
-//write to the CSV
-FILE* fp = fopen("personDatabase.csv", "a+");
-    if (!fp) {
-            // Error in file opening
-            printf("Can't access Database\n");
-        }
-    fprintf(fp,"\n%s,%s,%s,%d,%s,%s,%s,%s,%s",name,id,pass1,age,tel,vaciF[vaci],gnDev,jbRole,wrkDev);
-    printf("Registration completed..\n\n");
+    printf("\n%s\t%s\t%s\t%d\t%s\t%s\t%s\t%s\t%s\n\n",name,id,pass1,age,tel,vaciF[vaci],gnDev,jbRole,wrkDev);
+    //write to the CSV
+    FILE* fp = fopen("personDatabase.csv", "a+");
+        if (!fp) {
+                // Error in file opening
+                printf("Can't access Database\n");
+            }
+        fprintf(fp,"\n%s,%s,%s,%d,%s,%s,%s,%s,%s",name,id,pass1,age,tel,vaciF[vaci],gnDev,jbRole,wrkDev);
+        printf("Registration completed..\n\n");
 
-    fclose(fp);
+        fclose(fp);
 
 }
 
@@ -797,7 +872,7 @@ void regPlace(){
 int checkWorkPosition(char id[20]){
    
    for(int i=0;i<1000;i++){
-        if(stringcompare(id,workVal[i].id)==0){
+        if(strcmp(id,workVal[i].id)==0){
             return i;
         }
    }
@@ -806,19 +881,19 @@ int checkWorkPosition(char id[20]){
 int checkPersonPosition(char id[20]){
    
    for(int i=0;i<1000;i++){
-        if(stringcompare(id,personVal[i].id)==0){
+        if(strcmp(id,personVal[i].id)==0){
             return i;
         }
-   }
+   }return -1;
 }
 //check position from Place Dict
 int checkPlacePosition(char id[20]){
    
    for(int i=0;i<1000;i++){
-        if(stringcompare(id,placeVal[i].userName)==0){
+        if(strcmp(id,placeVal[i].userName)==0){
             return i;
         }
-   }
+   }return -1;
 }
 
 
