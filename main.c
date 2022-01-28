@@ -58,6 +58,7 @@ void updatePersonDict();
 void updateWorkPlaceDict();
 void updatePlaceDict();
 void updateFullDataDict();
+void updatetrackingDict();
 
 int count_lines(char csvfile[20]);
 int stringcompare(char *a,char *b);
@@ -72,7 +73,9 @@ void refresh(){
     updatePersonDict();
     updatePlaceDict();
     updateWorkPlaceDict();
+    updatetrackingDict();
     updateFullDataDict();
+    
 }
 
 int main()
@@ -80,18 +83,58 @@ int main()
     //refresh data from databases
     refresh();
 
-    printf("\t\t\t\tCovid19 Management System\n\n");
+    printf("\n\n\t\t\t\tCovid19 Management System\n\n");
     
+    printf("\n\nSelect :=> \n");
+        printf("\t\t\t[1] - Person Registration\n");
+        printf("\t\t\t[2] - Place Registration\n");        
+        printf("\t\t\t[3] - PHI System Login\n");
+        printf("\t\t\t[4] - Place System Login\n");
+        printf("\t\t\t[5] - System Exit\n");
 
+    int mainSelect;
+    char temp;
+    printf("\nAnswer : ");
+    scanf("%d",&mainSelect);
+    scanf("%c",&temp); //get temp character "\n"
 
-    // regPerson();
-    //regPlace();
-    // PHI();
-    tracking();
-    //printWorkPlaceDictValues();    
-    
-    //system("pause");
-    
+    switch(mainSelect){
+        
+        case 1 :
+            regPerson();
+            printf("\n\t\t**Press Enter**\n");
+            getchar();
+            system("clear");
+            main();
+        case 2 :
+            regPlace();
+            printf("\n\t\t**Press Enter**\n");
+            getchar();
+            system("clear");
+            main();
+        case 3 :
+            PHI();
+            printf("\n\t\t**Press Enter**\n");
+            getchar();
+            system("clear");
+            main();
+        case 4 :
+            tracking();
+            printf("\n\t\t**Press Enter**\n");
+            getchar();
+            system("clear");
+            main();
+        case 5 :
+            break;
+        default :
+            printf("\n\t\tInvalid Input..! Try Again.\n\n");
+            printf("\n\t\t**Press Enter**\n");
+            getchar();
+            system("clear");
+            main();
+            
+        //system("pause");
+    }
     return 0;
 }
 //Tracking 
@@ -290,17 +333,23 @@ void PHI(){
                 scanf("%s",R_ID);
 
                 int n = checkPersonPosition(R_ID);
-                if (stringcompare(dataval[n].gnDev,dataval[PHI_Val].wrkDev)==0){
+                if ((n!=-1) && (stringcompare(dataval[n].gnDev,dataval[PHI_Val].wrkDev)==0)){
                     
-                    //print line sperater
-                    drawLinesM();
-                    //print values
-                    printf("\nID : %s\t Name : %s\tVacination : %s\t WorkPlace : %s\n",dataval[n].id,dataval[n].name,dataval[n].vaci,dataval[n].placeName);
-                    //draw line below last row
-                    drawLinesM();
-                    printf("\n");
+                    for(int i=0; i<=1000; i++){
+                        
+                        if(strcmp(trackVal[i].id,R_ID)==0){
 
-                   
+                            //print line sperater
+                            drawLinesM();
+                            //print values
+                            printf("\n%s\t place : %s\t Location : %s\t Type : %s\n",trackVal[i].time,trackVal[i].placename,trackVal[i].location,trackVal[i].placetype);
+                            //draw line below last row
+                            drawLinesM();
+                        }
+                    
+                    }
+
+                    printf("\n");
                     break;
                 }
                 printf("\n\t\tInvalid ID..!\n");
@@ -328,6 +377,54 @@ void PHI(){
     }
 }
 
+//update tracking Dict
+void updatetrackingDict(){
+
+    FILE *fp = fopen("trackingDatabase.csv","r");
+    
+    if (!fp){
+            printf("Can't find file");
+        }
+    
+
+    char buff[1000]; //store the first 1024 lines into buff
+    int row_count = 0;
+    int filed_count = 0;
+
+    int i=0;
+    while(fgets(buff,1000, fp))
+    {
+        //printf("%s\n", buff);
+        filed_count =0;
+        row_count++;
+        if(row_count==1)
+            continue;
+
+        char *field = strtok(buff, ",");
+        while (field)
+        {   
+            if(filed_count==0)
+                strcpy(trackVal[i].time, field);
+            if(filed_count==1)
+                strcpy(trackVal[i].id, field);
+            if(filed_count==2)
+                strcpy(trackVal[i].placename, field);
+            if(filed_count==3)
+                strcpy(trackVal[i].location,field);    
+            if(filed_count==4)
+                strcpy(trackVal[i].placetype,field);
+            if(filed_count==5)
+                strcpy(trackVal[i].username, field);
+            
+            field = strtok(NULL, ",");
+            filed_count++;
+        }
+        // printf("\n%s\n",trackVal[i].time);
+        i++;
+    }
+    fclose(fp);
+
+}
 //update full Data Dcit
 void updateFullDataDict(){
     for(int k=0; k<1000;k++){
