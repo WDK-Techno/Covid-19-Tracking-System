@@ -3,7 +3,6 @@
 #include <string.h>
 #include <ctype.h>
 #include "reusingfunctions.h"
-#include "readcsv.h"
 #include <time.h>
 
 typedef struct person{
@@ -22,11 +21,6 @@ typedef struct workplace{
     char id[13];
     char placeUsername[20];
 }workplaceDict;
-
-typedef struct person_workPlace{
-    char id[13],name[50];
-
-}person_workPlaceDict;
 
 typedef struct data{
     char name[50],id[13],pass[6],gnDev[11],jbRole[16],wrkDev[11],tel[11],vaci[4],placeName[50],placeUsername[20];
@@ -49,10 +43,6 @@ void regPerson();
 void regPlace();
 void PHI();
 void tracking();
-
-void printPersonDictValues();
-void printPlaceDictValues();
-void printWorkPlaceDictValues();
 
 void updatePersonDict();
 void updateWorkPlaceDict();
@@ -88,8 +78,8 @@ int main()
     printf("\n\nSelect :=> \n");
         printf("\t\t\t[1] - Person Registration\n");
         printf("\t\t\t[2] - Place Registration\n");        
-        printf("\t\t\t[3] - PHI System Login\n");
-        printf("\t\t\t[4] - Place System Login\n");
+        printf("\t\t\t[3] - Place System Login\n");
+        printf("\t\t\t[4] - PHI System Login\n");
         printf("\t\t\t[5] - System Exit\n");
 
     int mainSelect;
@@ -102,38 +92,27 @@ int main()
         
         case 1 :
             regPerson();
-            printf("\n\t\t**Press Enter**\n");
-            getchar();
-            system("clear");
             main();
+            break;
         case 2 :
             regPlace();
-            printf("\n\t\t**Press Enter**\n");
-            getchar();
-            system("clear");
             main();
+            break;
         case 3 :
-            PHI();
-            printf("\n\t\t**Press Enter**\n");
-            getchar();
-            system("clear");
-            main();
-        case 4 :
             tracking();
-            printf("\n\t\t**Press Enter**\n");
-            getchar();
-            system("clear");
             main();
+            break;
+        case 4 :
+            PHI();
+            main();
+            break;
         case 5 :
+            return 0;
             break;
         default :
             printf("\n\t\tInvalid Input..! Try Again.\n\n");
-            printf("\n\t\t**Press Enter**\n");
-            getchar();
-            system("clear");
             main();
-            
-        //system("pause");
+            break;
     }
     return 0;
 }
@@ -641,55 +620,6 @@ FILE *fp = fopen(csvfile,"r");
     return count;
 }
 
-//Display person Dict Values
-void printPersonDictValues(){
-    int fcount = count_lines("personDatabase.csv");
-    for(int d=0;d<fcount;d++)
-    {   //print line sperater
-        drawLinesM();
-        //print values
-        printf("\nName : %s\t ID : %s\t Age : %d\t Tel : %s\nVacination : %s\t GN Div : %s\n",personVal[d].name,personVal[d].id,personVal[d].age,personVal[d].tel,personVal[d].vaci,personVal[d].gnDev);
-        //draw line below last row
-        if(d==fcount-1){
-            drawLinesM();
-            printf("\n"); 
-        }
-    }
-}
-
-//Display Place Dict Values
-void printPlaceDictValues(){
-    
-    int lineCount = count_lines("placeDatabase.csv");
-    for(int d=0;d<lineCount;d++){   
-        //print line sperater
-        drawLinesM();
-        //print values
-        printf("\nName : %s\t User Name : %s\t pass : %s\nplace type : %s\t Location : %s\t Emp Count : %d\n",placeVal[d].name,placeVal[d].userName,placeVal[d].pass,placeVal[d].plctype,placeVal[d].location,placeVal[d].empCount);
-        //draw line below last row
-        if(d==lineCount-1){
-            drawLinesM();
-            printf("\n");
-        } 
-    }
-}
-
-//Display Work Place Dict Values
-void printWorkPlaceDictValues(){
-    int tEmpCount = totalEmployeeCount();  
-    for(int d=0;d<tEmpCount;d++){   
-        //print line sperater
-        drawLinesM();
-        //print values
-        printf("\nID : %s\t User Name : %s\n",workVal[d].id,workVal[d].placeUsername);
-        //draw line below last row
-        if(d==tEmpCount-1){
-            drawLinesM();
-            printf("\n");
-        } 
-    }
-}
-
 //Draw LInes in Main.c
 void drawLinesM(){
     for(int k=0;k<100;k++){
@@ -737,13 +667,14 @@ void regPerson(){
     
     //ID
    while(1){
-       printf("ID : ");
-       scanf("%s",id);
-       int s =checkPersonData(id, 2);
-       if (s==1){
-       printf("\t\t\n*This is user is already in the system*\n\n");
+        printf("ID : ");
+        scanf("%s",id);
+
+        int s = checkPersonPosition(id);
+        if (s!=-1){
+        printf("\t\t\n*This is user is already in the system*\n\n");
     
-       }
+        }
        else if(strlen(id)==10){
            if(id[9]=='v'||id[9]=='V'){
                int findAlpha=0;
@@ -822,8 +753,8 @@ void regPerson(){
     printf("\nSelect your Jobrole :=> \n");
     selectJobRoles(jbRole);
 
-        //if grama niladhari --> get his Working Deivision
-        if(strcmp(jbRole,"Grama Niladhari")==0){
+        //if PHI --> get his Working Deivision
+        if(strcmp(jbRole,"PHI")==0){
             printf("\nSelect your working division :=> \n");
             selectDivisions(wrkDev);
         }else strcpy(wrkDev, "None");
@@ -867,8 +798,8 @@ void regPlace(){
             if(isspace(userName[i]))
                 findspace = 1;
         }
-        int r=checkPlaceData(userName,2);
-            if (r!= 1){
+        int r=checkPlacePosition(userName);
+            if (r==-1){
 
                 if (findspace!= 1){
                     break;
@@ -912,9 +843,9 @@ void regPlace(){
     {
         printf("\n\t\t[%d] employee NIC : ",i+1);
         scanf("%s",empID[i]);
-        int s =checkPersonData(empID[i], 2);
+        int s=checkPersonPosition(empID[i]);
 
-        if (s==1){
+        if (s!=-1){
             i++;
         }
         else {
