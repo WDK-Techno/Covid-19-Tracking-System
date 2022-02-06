@@ -1,15 +1,34 @@
 #include <stdio.h>
 #include <string.h>
 
- void selectDivisions(char* str){
-     int ans;
-    char devisions[11][11]={"Palapoluwa", "Arandara", "Kobbewala", "Hathnagoda", "Pindeniya", "Yattogoda", "Nawagamuwa", "Dewalegama", "Bisowela", "Ballapana"};
+void banner()
+{   
+    char *filename = "banner.txt";
+    FILE *fp = fopen(filename, "r");
+
+    if (fp == NULL){
+        printf("\nFile not found!\n %s", filename);
+    }
+    // read one character at a time and
+    // display it to the output
+    char ch;
+    while ((ch = fgetc(fp)) != EOF)
+        putchar(ch);
+
+    fclose(fp);
+
+    printf("\n\t\t\t\tCovid19 Tracking System\n\n");
+}
+
+void selectDivisions(char* str){
+    int ans;
+    char devisions[11][11]={"Palapoluwa", "Arandara", "Kobbewala", "Hathnagoda",
+        "Pindeniya", "Yattogoda", "Nawagamuwa", "Dewalegama", "Bisowela", "Ballapana"};
     for(int i=0;i<10;i++){
         printf("\t\t\t[%d] - %s\n",i+1,devisions[i]);
     }
     printf("\n");
-    while (1)
-    {
+    while (1){
         printf("Answer : ");
         scanf("%d",&ans);
         if (ans>=1 && ans<=10){
@@ -43,7 +62,8 @@ void selectJobRoles(char* str){
 
 void selectPlaceTypes(char*  str){
     int ans;
-   char placetypes[9][16]={"Bank", "Restaurant", "Grocery", "Supermarket", "Liquor shop", "Pharmacy", "Textile shop", "Saloon"};
+   char placetypes[9][16]={"Bank", "Restaurant", "Grocery", "Supermarket", 
+        "Liquor shop", "Pharmacy", "Textile shop", "Saloon"};
    for(int i=0;i<8;i++){
         printf("\t\t\t[%d] - %s\n",i+1,placetypes[i]);
     }
@@ -60,4 +80,5 @@ void selectPlaceTypes(char*  str){
     //return string value
     strcpy(str, placetypes[ans-1]);   
 }
+
 

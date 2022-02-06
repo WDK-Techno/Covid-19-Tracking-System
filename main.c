@@ -23,7 +23,8 @@ typedef struct workplace{
 }workplaceDict;
 
 typedef struct data{
-    char name[50],id[13],pass[6],gnDev[11],jbRole[16],wrkDev[11],tel[11],vaci[4],placeName[50],placeUsername[20],location[11],plctype[16];
+    char name[50],id[13],pass[6],gnDev[11],jbRole[16],wrkDev[11],tel[11],
+    vaci[4],placeName[50],placeUsername[20],location[11],plctype[16];
     int age,empCount;
 
 }fullDataDict;
@@ -32,33 +33,37 @@ typedef struct tracking{
     char time[30],id[13],placename[50],username[20],placetype[16],location[11];
 }trackingDict;
 
-personDict personVal[1000]; //array to structs to store values
+//Strcuture variable arrays
+personDict personVal[1000];
 placeDict placeVal[1000];
 workplaceDict workVal[1000];
-trackingDict trackVal[1000];
 fullDataDict dataval[1000];
+trackingDict trackVal[1000];
 
-
+//Main Functions
 void regPerson();
 void regPlace();
 void PHI();
 void tracking();
 
+//update structures functions
 void updatePersonDict();
-void updateWorkPlaceDict();
 void updatePlaceDict();
+void updateWorkPlaceDict();
 void updateFullDataDict();
 void updatetrackingDict();
 
+//special functions 
 int count_lines(char csvfile[20]);
 int stringcompare(char *a,char *b);
-void drawLinesM();
-int totalEmployeeCount();
+void drawLines();
 
+//check Position functions
 int checkWorkPosition(char id[20]);
 int checkPersonPosition(char id[20]);
 int checkPlacePosition(char id[20]);
 
+//Refresh
 void refresh(){
     updatePersonDict();
     updatePlaceDict();
@@ -70,10 +75,11 @@ void refresh(){
 
 int main()
 {
+    system("cls");
     //refresh data from databases
     refresh();
-
-    printf("\n\n\t\t\t\tCovid19 Management System\n\n");
+    //Print Banner
+    banner();
     
     printf("\n\nSelect :=> \n");
         printf("\t\t\t[1] - Person Registration\n");
@@ -87,6 +93,9 @@ int main()
     printf("\nAnswer : ");
     scanf("%d",&mainSelect);
     scanf("%c",&temp); //get temp character "\n"
+    
+    system("cls");
+    banner();
 
     switch(mainSelect){
         
@@ -116,15 +125,21 @@ int main()
     }
     return 0;
 }
+
 //Tracking 
 void tracking(){
     char user[13], pass[6];
     int place_p = 0;
-    printf("\n\n\t\t\tPlace System Login\n\n");
+    
 
-    refresh();
     //system login
     while(1){
+        
+        system("cls");
+        banner();
+        printf("\n\t\t\t\t[@]-Place System Login-[@]\n\n");
+        refresh();
+
         printf("\nUsername : ");
             scanf("%s",user);
             printf("Password : ");
@@ -140,8 +155,17 @@ void tracking(){
             printf("\nLogin Complete\n");
             break;
         }
+        system("cls");
+        banner();
+        printf("\n\t\t\t\t[@]-Place System Login-[@]\n\n");
+
         printf("\n\t\tIncorrect user name or password.. Try again!\n\n");
     }
+
+    system("cls");
+    banner();
+    printf("\n\t\t\t\t[@]-Customer Attendence-[@]\n\n");
+
     printf("\n\t\t**Enter 0 for exit system**\n\n");
     //get customer id
     while(1){
@@ -178,7 +202,11 @@ void tracking(){
                 fclose(fp);
         }
         else if (e==-1){
-        printf("\n\t\tInvalid ID. This ID not in the system\n\n");
+            system("cls");
+            banner();
+            printf("\n\t\t\t\t[@]-Customer Attendence-[@]\n\n");
+            
+            printf("\n\t\tInvalid ID. This ID not in the system\n\n");
         }
     }
 }
@@ -187,7 +215,7 @@ void tracking(){
 void PHI(){
     char id[13], pass[6];
     int PHI_Val=0;
-    printf("\n\n\t\t\tPHI System Login\n\n");
+    printf("\n\t\t\t\t[@]-PHI System Login-[@]\n\n");
     
     int lineCount = count_lines("personDatabase.csv");
     updatePersonDict();
@@ -211,12 +239,21 @@ void PHI(){
             break;
         }
         
+        system("cls");
+        banner();
+        printf("\n\t\t\t\t[@]-PHI System Login-[@]\n\n");
 
-        printf("\n\t\tIncorrect user name or password.. Try again!\n\n");
+        printf("\n\t\t\tIncorrect user name or password.. Try again!\n\n");
     }
+    
     
     int run=1;
     while(run){
+        
+        system("cls");
+        banner();
+        printf("\n\t\t\t\t   [@]-PHI System-[@]\n\n");
+
         printf("\nSelect :=> \n");
         printf("\t\t\t[1] - Residents Details\n");
         printf("\t\t\t[2] - Tracking Details\n");        
@@ -225,6 +262,10 @@ void PHI(){
         int ans3;
         printf("\nAnswer : ");
         scanf("%d",&ans3);
+
+        system("cls");
+        banner();
+        printf("\n\t\t\t\t[@]-Residents Details-[@]\n\n");
 
         //Residents Details (****)
         if(ans3 == 1){
@@ -235,6 +276,10 @@ void PHI(){
             int ans1;
             printf("\nAnswer : ");
             scanf("%d",&ans1);
+
+            system("cls");
+            banner();
+            printf("\n\t\t\t\t[@]-All Residents Details-[@]\n\n");
 
             printf("\n\nPHI Working Devision : %s\n\n",personVal[PHI_Val].wrkDev);
             
@@ -247,50 +292,50 @@ void PHI(){
                     if(stringcompare(personVal[PHI_Val].wrkDev,personVal[d].gnDev)==0){
                         
                         //print line sperater
-                        drawLinesM();
+                        drawLines();
                         //print values
                         printf("\nName : %s\t ID : %s\t Age : %d\t Tel : %s\nVacination : %s\t GN Div : %s\n\nWork Place : %s\t Location : %s\t Type : %s\t Employee Count : %d\n",dataval[d].name,dataval[d].id,dataval[d].age,dataval[d].tel,dataval[d].vaci,dataval[d].gnDev,dataval[d].placeName,dataval[d].location,dataval[d].plctype,dataval[d].empCount);
                         
                     }
                 }
                 //draw line below last row
-                drawLinesM();
+                drawLines();
                 printf("\n"); 
             }
             if (ans1 == 2){
                 char R_ID[13];
                 int wh=0;
                 while(1){
+                    
+                    system("cls");
+                    banner();
+                    printf("\n\t\t\t\t[@]-One Resident Details-[@]\n\n");
+
                     printf("\nEnter Resident ID : ");
                     scanf("%s",R_ID);
                     
-                int n = checkPersonPosition(R_ID);
-                if ((n!=-1) && (stringcompare(dataval[n].gnDev,dataval[PHI_Val].wrkDev)==0)){
+                    int n = checkPersonPosition(R_ID);
+                    if ((n!=-1) && (stringcompare(dataval[n].gnDev,dataval[PHI_Val].wrkDev)==0)){
                     
-                    //print line sperater
-                    drawLinesM();
-                    //print values
-                    printf("\nName : %s\t ID : %s\t Age : %d\t Tel : %s\nVacination : %s\t GN Div : %s\n\nWork Place : %s\t Location : %s\t Type : %s\t Employee Count : %d\n",dataval[n].name,dataval[n].id,dataval[n].age,dataval[n].tel,dataval[n].vaci,dataval[n].gnDev,dataval[n].placeName,dataval[n].location,dataval[n].plctype,dataval[n].empCount);
-                    //draw line below last row
-                    drawLinesM();
-                    printf("\n");
-                    wh=1;
-                    break; 
-                }
+                        //print line sperater
+                        drawLines();
+                        //print values
+                        printf("\nName : %s\t ID : %s\t Age : %d\t Tel : %s\nVacination : %s\t GN Div : %s\n\nWork Place : %s\t Location : %s\t Type : %s\t Employee Count : %d\n",dataval[n].name,dataval[n].id,dataval[n].age,dataval[n].tel,dataval[n].vaci,dataval[n].gnDev,dataval[n].placeName,dataval[n].location,dataval[n].plctype,dataval[n].empCount);
+                        //draw line below last row
+                        drawLines();
+                        printf("\n");
+                        wh=1;
+                        break; 
+                    }
                     
-                    // for (int n = 0; n<lineCount; n++){
-                    
-                    //     if (strcmp(R_ID,personVal[n].id)==0){
-                            
-                    //         if(stringcompare(personVal[PHI_Val].wrkDev,personVal[n].gnDev)==0){
-                            
-                    //         }
-                            
-                    //     }
-                    // }
                     if(wh==1){
                         break;
                     }
+                    
+                    system("cls");
+                    banner();
+                    printf("\n\t\t\t\t[@]-One Resident Details-[@]\n\n");
+
                     printf("\n\t\tInvalid ID..!\n");
                     printf("\n\nDo you Need Try Again :=>\n");
                     printf("\t\t\t[1] - YES\n");
@@ -312,17 +357,24 @@ void PHI(){
         if(ans3 == 2){
             char R_ID[13];    
             while(1){
+                
+                system("cls");
+                banner();
+                printf("\n\t\t\t\t[@]-Tracking Details-[@]\n\n");
+
                 printf("\nEnter Resident ID : ");
                 scanf("%s",R_ID);
-                drawLinesM();
-                drawLinesM();
+
+                drawLines();
+                drawLines();
                 int n = checkPersonPosition(R_ID);
-                printf("\nName : %s\t ID : %s\t Age : %d\t Tel : %s\nVacination : %s\t GN Div : %s\n\nWork Place : %s\t Location : %s\t Type : %s\t Employee Count : %d\n",dataval[n].name,dataval[n].id,dataval[n].age,dataval[n].tel,dataval[n].vaci,dataval[n].gnDev,dataval[n].placeName,dataval[n].location,dataval[n].plctype,dataval[n].empCount);
-                drawLinesM();
-                drawLinesM();
-                printf("\n");
                 
                 if ((n!=-1) && (stringcompare(dataval[n].gnDev,dataval[PHI_Val].wrkDev)==0)){
+                    
+                    printf("\nName : %s\t ID : %s\t Age : %d\t Tel : %s\nVacination : %s\t GN Div : %s\n\nWork Place : %s\t Location : %s\t Type : %s\t Employee Count : %d\n",dataval[n].name,dataval[n].id,dataval[n].age,dataval[n].tel,dataval[n].vaci,dataval[n].gnDev,dataval[n].placeName,dataval[n].location,dataval[n].plctype,dataval[n].empCount);
+                    drawLines();
+                    drawLines();
+                    printf("\n");
                     
                     printf("\t\t\t\t\t-Tracking Details-\n");
                     for(int i=0; i<=1000; i++){
@@ -330,18 +382,24 @@ void PHI(){
                         if(strcmp(trackVal[i].id,R_ID)==0){
 
                             //print line sperater
-                            drawLinesM();
+                            drawLines();
                             //print values
                             printf("\n%s\t place : %s\t Location : %s\t Type : %s\n",trackVal[i].time,trackVal[i].placename,trackVal[i].location,trackVal[i].placetype);
                         }
                     
                     }
                     //draw line below last row
-                    drawLinesM();
+                    drawLines();
 
                     printf("\n");
                     break;
                 }
+
+                system("cls");
+                banner();
+                printf("\n\t\t\t\t[@]-Tracking Details-[@]\n\n");
+
+
                 printf("\n\t\tInvalid ID..!\n");
                 printf("\n\nDo you Need Try Again :=>\n");
                 printf("\t\t\t[1] - YES\n");
@@ -364,6 +422,9 @@ void PHI(){
         if (ans3 == 3){
             break;
         }
+        
+        //system pause  
+        system("pause");
     }
 }
 
@@ -415,6 +476,7 @@ void updatetrackingDict(){
     fclose(fp);
 
 }
+
 //update full Data Dcit
 void updateFullDataDict(){
     for(int k=0; k<1000;k++){
@@ -450,15 +512,10 @@ void updatePersonDict(){
     {
         printf("Can't find file");
     }
-    //find line count
-    //int count= count_lines("personDatabase.csv");
-
 
     char buff[1000]; //store the first 1024 lines into buff
     int row_count = 0;
     int filed_count = 0;
-
-    //personDict values[1000]; //array to structs to store values
 
     int i=0;
     while(fgets(buff,1000, fp))
@@ -635,8 +692,8 @@ FILE *fp = fopen(csvfile,"r");
 }
 
 //Draw LInes in Main.c
-void drawLinesM(){
-    for(int k=0;k<130;k++){
+void drawLines(){
+    for(int k=0;k<110;k++){
             printf("_");}
         printf("\n");
 }
@@ -659,23 +716,15 @@ int stringcompare(char *a,char *b) {
     return 1;  
 }  
 
-//use this to Total employee count in place database
-int totalEmployeeCount(){
-    int lineCount = count_lines("placeDatabase.csv");
-    int total = 0;
-    for(int i=0;i<lineCount;i++){
-       total =total + placeVal[i].empCount;
-    }
-    return total;
-}
-
 //Registration of Persons
 void regPerson(){
     char name[50],id[13],pass1[6],pass2[6],gnDev[11],jbRole[16],wrkDev[11],tel[11];
     int age,vaci;
-    
+
+    system("cls");
+    banner();
+    printf("\t\t\t       [@]-Person Registration-[@]\n\n");
     //name
-   printf("\nSystem Registration\n\n");
    printf("Name : ");
    scanf("%[^\n]s",name);
     
@@ -791,9 +840,12 @@ void regPerson(){
 void regPlace(){
     char name[50],userName[30],plctype[16],pass1[6],pass2[6],location[11],empID[100][13];
     int empCount,reg;
-
+    system("cls");
+    banner();
+    printf("\t\t\t       [@]-Place Registration-[@]\n\n");
+    refresh();
+    printf("\n");
  //place name
-   printf("\nSystem Registration of Places\n\n");
    printf("Name : ");
    scanf("%[^\n]s",name);
     
@@ -919,6 +971,7 @@ int checkWorkPosition(char id[20]){
         }
    }
 }
+
 //check position from Person Dict
 int checkPersonPosition(char id[20]){
    
@@ -928,6 +981,7 @@ int checkPersonPosition(char id[20]){
         }
    }return -1;
 }
+
 //check position from Place Dict
 int checkPlacePosition(char id[20]){
    
