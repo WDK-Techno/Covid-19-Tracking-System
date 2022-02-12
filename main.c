@@ -807,8 +807,9 @@ void regPlace(){
     ///write to csv
     fprintf(fp,"\n%s,%s,%s,%s,%s,%d",name,userName,pass1,plctype,location,empCount);
     //print 
-    printf("\n%s\t%s\t%s\t%s\t%s\t%d",name,userName,pass1,plctype,location,empCount);
-    
+    drawLines();
+    printf("\n%s\t%s\t%s\t%s\t%s\t%d\n",name,userName,pass1,plctype,location,empCount);
+    drawLines();
     //employee IDs
     for (int d = 0; d < empCount; d++)
     {   
@@ -821,7 +822,7 @@ void regPlace(){
     printf("\n");
     printf("Registration completed..\n\n");
 
-
+    system("pause");
 
 
 }
